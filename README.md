@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Requirements: React Calendar Component
+The goal is to create a component that displays a teacher’s schedule. The calendar should be divided into 30-minute slots for the entire day. Slots outside the teacher’s schedule (white color) should not be interactive. Slots within the teacher’s schedule (light green) should have a duration of 30 minutes and be interactive (for example, they should display an alert with the slot’s time). Lessons (red color) can be 30, 60, or 90 minutes long, are presented as a single block, and should also be interactive (for example, display an alert with the lesson’s time).
+1. Views
+•	Desktop:
+o	Week view (7 days).
+•	Mobile:
+o	Day view (1 day).
+o	3-day view (3 days).
+•	Switch views depending on screen size.
+________________________________________
+2. Navigation
+•	Controls:  <   >
+o	< → moves view range back (by 1 day, 3 days, or 1 week depending on active view).
+o	> → moves forward the same way.
+________________________________________
+3. Time Slots
+•	Granularity: configurable (default 30 minutes).
+•	Visible range: e.g., 00:00–24:00.
+•	Each slot maps to one or more grid cells.
+•	Each cell can be:
+o	Not available (e.g., outside working hours, white).
+o	Available (clickable, styled green).
+o	Booked (clickable, styled red with student name).________________________________________
+4. Layout & Responsiveness
+•	CSS Grid structure:
+o	Columns = days in view.
+o	Rows = time slots.
+o	First column = time labels.
+•	Desktop:
+o	grid-cols-[time + 7 days]
+•	Mobile:
+o	Switch to grid-cols-[time + 1/3 days] with horizontal scroll if needed.
+•	Use overflow-x-auto for small screens.
+________________________________________
+5. Interaction
+•	Click Available slot → triggers callback (e.g., onSlotSelect(slot)).
+•	Hover → highlight cell.
+•	Booked slot should show tooltip or inline info (student name, duration) on click show context menu
+•	Booked By Other -> no interaction
+________________________________________
+6. Data Structure
+Input prop:
+Type Schedule = [
+  {
+    "startTime": "2025-08-23T22:30:00+00:00",
+    "endTime": "2025-08-24T02:29:59+00:00"
+  },
+  {
+    "startTime": "2025-08-25T01:30:00+00:00",
+    "endTime": "2025-08-25T04:59:59+00:00"
+  },
+  {
+    "startTime": "2025-08-25T11:00:00+00:00",
+    "endTime": "2025-08-25T19:29:59+00:00"
+  },
+  {
+    "startTime": "2025-08-27T02:30:00+00:00",
+    "endTime": "2025-08-27T06:59:59+00:00"
+  },
+  {
+    "startTime": "2025-08-28T23:00:00+00:00",
+    "endTime": "2025-08-29T08:29:59+00:00"
+  },
+  {
+    "startTime": "2025-08-30T22:30:00+00:00",
+    "endTime": "2025-08-31T02:29:59+00:00"
+  },
+  {
+    "startTime": "2025-09-01T01:30:00+00:00",
+    "endTime": "2025-09-01T04:59:59+00:00"
+  },
+  {
+    "startTime": "2025-09-01T11:00:00+00:00",
+    "endTime": "2025-09-01T19:29:59+00:00"
+  }
+]
+type Lesson = [
+    {
+        "id": 52,
+        "duration": 60,
+        "startTime": "2025-08-25T13:30:00+00:00",
+        "endTime": "2025-08-25T14:29:59+00:00",
+        “student”: “Alex”
+},
+{…}]
+type CalendarProps = {
+  view: "day" | "3days" | "week";
+  startDate: Date; // start of current view
+  schedule:[]
+  lessons: [];
+ onSlotSelect?: (slot: { startTime: Date; endTime: Date }) => void;
+};
+________________________________________
+7. Styling
+•	TailwindCSS utility classes.
+•	Color coding:
+o	bg-green-200 → available.
+o	bg-red-300 → booked.
+o	bg-gray-100 → blocked/off-hours.
+•	Responsive typography for day labels.
+________________________________________
+You can use AI but you need to understand the code!
