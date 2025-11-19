@@ -17,7 +17,7 @@ const Schedule = ({endColumn, endRow, startColumn, startRow, endDate, startDate}
             }}
             onClick={() => {
 
-                window.alert("Время работы с " + startDate.toLocaleString() + " до " + endDate.toLocaleString())
+                window.alert("Opening hours from " + startDate.toLocaleString() + " to " + endDate.toLocaleString())
             }}
         ></div>
     )

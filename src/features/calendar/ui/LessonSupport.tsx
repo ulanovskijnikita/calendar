@@ -1,8 +1,8 @@
 import { memo } from "react"
-import type ScheduleSupportProps from "../model/ScheduleSupportProps"
-import Schedule from "./Schedule"
+import Lesson from "./Lesson"
+import type LessonSupportProps from "../model/LessonSupportProps"
 
-const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, startDate, startRow}: ScheduleSupportProps) => {
+const LessonSupport = ({dayArr, endColumn, endDate, endRow, startColumn, startDate, startRow, student}: LessonSupportProps) => {
 
     const isOtherDays = startDate.getDay() != endDate.getDay()
 
@@ -12,7 +12,7 @@ const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, start
 
             {
 
-                !isOtherDays && <Schedule
+                !isOtherDays && <Lesson
 
                     endColumn={endColumn}
                     endRow={endRow}
@@ -20,6 +20,7 @@ const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, start
                     startRow={startRow}
                     startDate={startDate}
                     endDate={endDate}
+                    student={student}
                 />
             }
 
@@ -29,7 +30,7 @@ const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, start
                 
                     {
 
-                        dayArr.includes( startDate.getDay() ) && <Schedule
+                        dayArr.includes( startDate.getDay() ) && <Lesson
 
                             endColumn={startColumn + 1}
                             endRow={49}
@@ -37,12 +38,13 @@ const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, start
                             startRow={startRow}
                             startDate={startDate}
                             endDate={new Date( new Date ( endDate ).setHours(0, 0, 0, 0) - 1 )}
+                            student={student}
                         />
                     }
 
                     {
 
-                        dayArr.includes( endDate.getDay() ) && <Schedule
+                        dayArr.includes( endDate.getDay() ) && <Lesson
 
                             endColumn={endColumn + 1}
                             endRow={endRow}
@@ -50,6 +52,7 @@ const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, start
                             startRow={1}
                             startDate={new Date( new Date( endDate ).setHours(0, 0, 0) )}
                             endDate={endDate}
+                            student={student}
                         />
                     }
                 </>
@@ -58,4 +61,4 @@ const ScheduleSupport = ({dayArr, endColumn, endDate, endRow, startColumn, start
     )
 }
 
-export default memo( ScheduleSupport )
+export default memo( LessonSupport )
