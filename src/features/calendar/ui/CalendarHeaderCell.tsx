@@ -1,4 +1,5 @@
-import type { PropsWithChildren } from "react";
+import { memo } from "react";
+import type { PropsWithChildren } from 'react'
 
 const CalendarHeaderCell = ({ children }: PropsWithChildren) => {
 
@@ -8,4 +9,4 @@ const CalendarHeaderCell = ({ children }: PropsWithChildren) => {
     )
 }
 
-export default CalendarHeaderCell
+export default memo( CalendarHeaderCell )

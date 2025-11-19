@@ -1,13 +1,33 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CalendarTable from "./CalendarTable"
+import type CalendarState from "../model/CalendarState"
+import matchMediaCalendarState from "./matchMediaCalendarState"
+import lessons from "@/shared/api/lessons"
+import schedule from "@/shared/api/schedule"
 
 const Calendar = () => {
 
-    const currentDate = new Date()
+    const startDate = new Date()
 
-    const [date, setDate] = useState( currentDate )
+    const [calendarState, setCalendarState] = useState<CalendarState | null>( null )
+
+    useEffect(() => {
+
+        setCalendarState( matchMediaCalendarState( startDate ) )
+
+        const handleResize = () => setCalendarState( matchMediaCalendarState( startDate ) )
+
+        window.addEventListener('resize', handleResize)
+
+        return () => {
+
+            setCalendarState( null )
+
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
 
     return (
 
@@ -23,7 +43,15 @@ const Calendar = () => {
                     className="block aspect-square w-1/6 md:w-1/12 cursor-pointer"
                     onClick={() => {
 
-                        setDate((date) => new Date( date.getTime() - (1000 * 60 * 60 * 24) ))
+                        setCalendarState(calendarState => {
+
+                            return {
+
+                                ...calendarState!,
+                                startDate: new Date( calendarState!.startDate.getTime() - calendarState!.beetwenDays ),
+                                endDate: new Date( calendarState!.endDate.getTime() - calendarState!.beetwenDays ),
+                            }
+                        })
                     }}
                 />
 
@@ -31,9 +59,16 @@ const Calendar = () => {
 
                     <h2 className="capitalize text-2xl md:text-4xl">teacher's calendar</h2>
 
-                    <h3 className="capitalize md:text-left">current date: {date.toDateString()}</h3>
-                </div>
-                
+                    {
+
+                        calendarState && <h3 className="capitalize md:text-left"><span className="hidden md:inline">start</span> date: {calendarState.startDate.toDateString()}</h3>
+                    }
+                    
+                    {
+
+                        calendarState && <h3 className="capitalize md:text-left hidden md:block">end date: {new Date( calendarState.endDate.getTime() - (1000 * 60 * 60 * 24) ).toDateString()}</h3>
+                    }
+                </div>                
                 
                 <img
 
@@ -42,12 +77,28 @@ const Calendar = () => {
                     className="block aspect-square w-1/6 md:w-1/12 cursor-pointer"
                     onClick={() => {
 
-                        setDate((date) => new Date( date.getTime() + (1000 * 60 * 60 * 24) ))
+                        setCalendarState(calendarState => {
+
+                            return {
+
+                                ...calendarState!,
+                                startDate: new Date( calendarState!.startDate.getTime() + calendarState!.beetwenDays ),
+                                endDate: new Date( calendarState!.endDate.getTime() + calendarState!.beetwenDays ),
+                            }
+                        })
                     }}
                 />
             </div>
             
-            <CalendarTable startDate={date} />
+            {
+                
+                calendarState && <CalendarTable
+
+                    calendarState={calendarState}
+                    lessons={lessons}
+                    schedule={schedule}
+                />
+            }
         </section>
     )
 }

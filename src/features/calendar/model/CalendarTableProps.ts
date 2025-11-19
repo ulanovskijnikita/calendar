@@ -1,12 +1,15 @@
-import Lesson from "@/shared/model/Leasson";
-import Schedule from "@/shared/model/Schedule";
+import type Lesson from "@/shared/model/Leasson";
+import type Schedule from "@/shared/model/Schedule";
+import type CalendarState from "./CalendarState";
 
 type CalendarTableProps = {
 
-    startDate: Date
+    // startDate: Date
+    // onSlotSelect?: (slot: { startTime: Date; endTime: Date }) => void
+    
     schedule: Schedule[]
     lessons: Lesson[];
-    onSlotSelect?: (slot: { startTime: Date; endTime: Date }) => void
+    calendarState: CalendarState
 }
 
 export default CalendarTableProps
