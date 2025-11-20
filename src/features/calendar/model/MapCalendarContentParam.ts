@@ -1,5 +1,3 @@
-import type CalendarState from "./CalendarState"
-
 type MapCalendarContentParam = {
 
     value: {
@@ -7,7 +5,8 @@ type MapCalendarContentParam = {
         startTime: string
         endTime: string
     }
-    calendarState: CalendarState
+    searchStartDate: Date
+    searchEndDate: Date
     currentDay: number
 }
 

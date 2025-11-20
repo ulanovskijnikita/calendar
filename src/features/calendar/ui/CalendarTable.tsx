@@ -5,12 +5,20 @@ import CalendarHeaderCell from "./CalendarHeaderCell";
 import ScheduleSupport from "./ScheduleSupport";
 import mapCalendarContent from "./mapCalendarContent";
 import LessonSupport from "./LessonSupport";
+import { useSearchParams } from "next/navigation";
+import { memo, useMemo } from "react";
+import { endDateSearch, startDateSearch } from "./calendarSearchParam";
 
-const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps) => {
+const CalendarTable = ({ lessons, schedule, beetwenDays }: CalendarTableProps) => {
 
-    const columnCount = calendarState ? calendarState.beetwenDays / (1000 * 60 * 60 * 24) : 0
+    const columnCount = beetwenDays / (1000 * 60 * 60 * 24)
 
-    const currentDay = calendarState.startDate.getDay()
+    const searchParams = useSearchParams()
+
+    const startDate = useMemo<Date>( () => new Date( searchParams.get( startDateSearch ) ?? Date.now() ), [searchParams] )
+    const endDate = useMemo<Date>( () => new Date( searchParams.get( endDateSearch ) ?? Date.now() ), [searchParams] )
+
+    const currentDay = startDate.getDay()
 
     const dayArr: number[] = []
 
@@ -42,7 +50,7 @@ const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps)
 
                 Array.from({length: 48}).map((_value, timeIndex) => {
 
-                    const currentDate = new Date( new Date( calendarState.startDate.setHours(0, 0) ).setMinutes(timeIndex * 30) )
+                    const currentDate = new Date( new Date( startDate.setHours(0, 0) ).setMinutes(timeIndex * 30) )
 
                     const hours = currentDate.getHours()
 
@@ -63,7 +71,7 @@ const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps)
 
                 schedule.map((value, index) => {
 
-                    const res = mapCalendarContent({ calendarState: calendarState, currentDay: currentDay, value: value })
+                    const res = mapCalendarContent({ currentDay: currentDay, value: value, searchEndDate: endDate, searchStartDate: startDate })
 
                     if ( !res ) return
 
@@ -75,7 +83,7 @@ const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps)
                             endColumn={res.endColumn}
                             endDate={res.endDate}
                             endRow={res.endRow}
-                            startColumn={res.endColumn}
+                            startColumn={res.startColumn}
                             startDate={res.startDate}
                             startRow={res.startRow}
                             key={index}
@@ -89,7 +97,7 @@ const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps)
 
                 lessons.map((value, index) => {
 
-                    const res = mapCalendarContent({ calendarState: calendarState, currentDay: currentDay, value: value })
+                    const res = mapCalendarContent({ currentDay: currentDay, value: value, searchEndDate: endDate, searchStartDate: startDate })
 
                     if ( !res ) return
 
@@ -101,7 +109,7 @@ const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps)
                             endColumn={res.endColumn}
                             endDate={res.endDate}
                             endRow={res.endRow}
-                            startColumn={res.endColumn}
+                            startColumn={res.startColumn}
                             startDate={res.startDate}
                             startRow={res.startRow}
                             key={index}
@@ -114,4 +122,4 @@ const CalendarTable = ({ calendarState, lessons, schedule }: CalendarTableProps)
     )
 }
 
-export default CalendarTable
+export default memo( CalendarTable )

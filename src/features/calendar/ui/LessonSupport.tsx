@@ -46,9 +46,9 @@ const LessonSupport = ({dayArr, endColumn, endDate, endRow, startColumn, startDa
 
                         dayArr.includes( endDate.getDay() ) && <Lesson
 
-                            endColumn={endColumn + 1}
+                            endColumn={endColumn}
                             endRow={endRow}
-                            startColumn={endColumn}
+                            startColumn={startColumn + 1}
                             startRow={1}
                             startDate={new Date( new Date( endDate ).setHours(0, 0, 0) )}
                             endDate={endDate}

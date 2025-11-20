@@ -1,13 +1,13 @@
 import type MapCalendarContentParam from "../model/MapCalendarContentParam"
 import type MapCalendarContentRes from "../model/MapCalendarContentRes"
 
-export default function mapCalendarContent({ value, calendarState, currentDay }: MapCalendarContentParam): MapCalendarContentRes | undefined {
+export default function mapCalendarContent({ value, searchStartDate, searchEndDate, currentDay }: MapCalendarContentParam): MapCalendarContentRes | undefined {
 
     let startDate = new Date( value.startTime )
     let endDate = new Date( value.endTime )
 
-    const startDateIsFeilure = startDate.getTime() <= calendarState.startDate.getTime() || startDate.getTime() >= calendarState.endDate.getTime()
-    const endDateIsFailure = endDate.getTime() <= calendarState.startDate.getTime() || endDate.getTime() >= calendarState.endDate.getTime()
+    const startDateIsFeilure = startDate.getTime() <= searchStartDate.getTime() || startDate.getTime() >= searchEndDate.getTime()
+    const endDateIsFailure = endDate.getTime() <= searchStartDate.getTime() || endDate.getTime() >= searchEndDate.getTime()
 
     if (startDateIsFeilure && endDateIsFailure) return
 

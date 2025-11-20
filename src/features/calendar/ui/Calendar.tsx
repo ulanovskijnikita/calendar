@@ -1,32 +1,59 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
 import CalendarTable from "./CalendarTable"
-import type CalendarState from "../model/CalendarState"
-import matchMediaCalendarState from "./matchMediaCalendarState"
+import matchMediaEndDate from "./matchMediaEndDate"
 import lessons from "@/shared/api/lessons"
 import schedule from "@/shared/api/schedule"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { endDateSearch, startDateSearch } from "./calendarSearchParam"
 
 const Calendar = () => {
 
-    const startDate = new Date()
+    const [beetwenDays, setBeetwenDays] = useState< number | null >( null )
 
-    const [calendarState, setCalendarState] = useState<CalendarState | null>( null )
+    const router = useRouter()
 
-    useEffect(() => {
+    const pathname = usePathname()
 
-        setCalendarState( matchMediaCalendarState( startDate ) )
+    const searchParams = useSearchParams()
 
-        const handleResize = () => setCalendarState( matchMediaCalendarState( startDate ) )
+    const startDate = useMemo<Date>( () => new Date( searchParams.get( startDateSearch ) ?? new Date().setHours(0, 0, 0, 0) ), [searchParams] )
+
+    const endDate = useMemo<Date>( () => new Date( searchParams.get( endDateSearch ) ?? Date.now() ), [searchParams] )
+
+    const addSearchParams = useCallback( () => {
+
+        const params = new URLSearchParams()
+
+        const {beetwenDays, endDate} = matchMediaEndDate( startDate )
+
+        params.set(startDateSearch, startDate.toString())
+        params.set(endDateSearch, endDate.toString())
+
+        router.push(pathname + '?' + params)
+
+        setBeetwenDays( beetwenDays )
+    }, [searchParams] )
+
+    const handleResize = useCallback( () => {
+        
+        addSearchParams()
+    }, [searchParams] )
+
+    useEffect(() => {        
 
         window.addEventListener('resize', handleResize)
 
         return () => {
 
-            setCalendarState( null )
-
             window.removeEventListener('resize', handleResize)
         }
+    }, [handleResize])
+
+    useLayoutEffect(() => {
+
+        addSearchParams()
     }, [])
 
     return (
@@ -43,15 +70,15 @@ const Calendar = () => {
                     className="block aspect-square w-1/6 md:w-1/12 cursor-pointer"
                     onClick={() => {
 
-                        setCalendarState(calendarState => {
+                        const params = new URLSearchParams()
 
-                            return {
+                        if (beetwenDays) {
 
-                                ...calendarState!,
-                                startDate: new Date( calendarState!.startDate.getTime() - calendarState!.beetwenDays ),
-                                endDate: new Date( calendarState!.endDate.getTime() - calendarState!.beetwenDays ),
-                            }
-                        })
+                            params.set(startDateSearch, new Date( startDate.getTime() - beetwenDays ).toString())
+                            params.set(endDateSearch, new Date( endDate.getTime() - beetwenDays ).toString())
+
+                            router.push(pathname + '?' + params)
+                        }
                     }}
                 />
 
@@ -59,15 +86,9 @@ const Calendar = () => {
 
                     <h2 className="capitalize text-2xl md:text-4xl">teacher's calendar</h2>
 
-                    {
-
-                        calendarState && <h3 className="capitalize md:text-left"><span className="hidden md:inline">start</span> date: {calendarState.startDate.toDateString()}</h3>
-                    }
+                    <h3 className="capitalize md:text-left"><span className="hidden md:inline">start</span> date: {startDate.toDateString()}</h3>
                     
-                    {
-
-                        calendarState && <h3 className="capitalize md:text-left hidden md:block">end date: {new Date( calendarState.endDate.getTime() - (1000 * 60 * 60 * 24) ).toDateString()}</h3>
-                    }
+                    <h3 className="capitalize md:text-left hidden md:block">end date: {endDate.toDateString()}</h3>
                 </div>                
                 
                 <img
@@ -77,24 +98,24 @@ const Calendar = () => {
                     className="block aspect-square w-1/6 md:w-1/12 cursor-pointer"
                     onClick={() => {
 
-                        setCalendarState(calendarState => {
+                        const params = new URLSearchParams()
 
-                            return {
+                        if (beetwenDays) {
 
-                                ...calendarState!,
-                                startDate: new Date( calendarState!.startDate.getTime() + calendarState!.beetwenDays ),
-                                endDate: new Date( calendarState!.endDate.getTime() + calendarState!.beetwenDays ),
-                            }
-                        })
+                            params.set(startDateSearch, new Date( startDate.getTime() + beetwenDays ).toString())
+                            params.set(endDateSearch, new Date( endDate.getTime() + beetwenDays ).toString())
+
+                            router.push(pathname + '?' + params)
+                        }
                     }}
                 />
             </div>
             
             {
                 
-                calendarState && <CalendarTable
+                beetwenDays && <CalendarTable
 
-                    calendarState={calendarState}
+                    beetwenDays={beetwenDays}
                     lessons={lessons}
                     schedule={schedule}
                 />
