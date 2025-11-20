@@ -1,4 +1,5 @@
 import Calendar from "@/features/calendar/ui/Calendar";
+import { Suspense } from "react";
 
 export default function Home() {
 
@@ -6,7 +7,10 @@ export default function Home() {
 
     <main>
 
-      <Calendar />
+      <Suspense fallback={<p>Loading...</p>} >
+
+        <Calendar />
+      </Suspense>
     </main>
   )
 }
