@@ -77,7 +77,7 @@ const Calendar = () => {
                             params.set(startDateSearch, new Date( startDate.getTime() - beetwenDays ).toString())
                             params.set(endDateSearch, new Date( endDate.getTime() - beetwenDays ).toString())
 
-                            router.push(pathname + '?' + params)
+                            router.replace(pathname + '?' + params)
                         }
                     }}
                 />
@@ -105,7 +105,7 @@ const Calendar = () => {
                             params.set(startDateSearch, new Date( startDate.getTime() + beetwenDays ).toString())
                             params.set(endDateSearch, new Date( endDate.getTime() + beetwenDays ).toString())
 
-                            router.push(pathname + '?' + params)
+                            router.replace(pathname + '?' + params)
                         }
                     }}
                 />
